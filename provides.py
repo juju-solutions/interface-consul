@@ -7,7 +7,7 @@ class ConsulClient(RelationBase):
     scope = scopes.UNIT
     auto_accessors = ['address', 'port']
 
-    @hook('{requires:consul-agent}-relation-{joined,changed}')
+    @hook('{provides:consul-agent}-relation-{joined,changed}')
     def changed(self):
         self.set_state('{relation_name}.connected')
         data = {
@@ -17,7 +17,7 @@ class ConsulClient(RelationBase):
         if all(data.values()):
             self.set_state('{relation_name}.available')
 
-    @hook('{requires:consul-agent}-relation-{broken,departed}')
+    @hook('{provides:consul-agent}-relation-{broken,departed}')
     def broken(self):
         if(is_state('{relation_name}.available')):
             self.remove_state('{relation_name}.available')
