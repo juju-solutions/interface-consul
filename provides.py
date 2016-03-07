@@ -3,6 +3,7 @@ from charms.reactive import RelationBase
 from charms.reactive import scopes
 from charms.reactive import is_state
 
+
 class ConsulClient(RelationBase):
     scope = scopes.UNIT
     auto_accessors = ['address', 'port']
