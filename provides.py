@@ -5,20 +5,21 @@ from charms.reactive import is_state
 
 
 class ConsulClient(RelationBase):
-    scope = scopes.UNIT
-    auto_accessors = ['address', 'port']
 
-    @hook('{provides:consul-agent}-relation-{joined,changed}')
+    @hook('{provides:consul}-relation-{joined,changed}')
     def changed(self):
-        self.set_state('{relation_name}.connected')
-        data = {
-            'address': self.address(),
-            'port': self.port(),
-        }
-        if all(data.values()):
-            self.set_state('{relation_name}.available')
+        conv = self.conversation()
+        conv.set_state('{relation_name}.connected')
 
-    @hook('{provides:consul-agent}-relation-{broken,departed}')
+    @hook('{provides:consul}-relation-{broken,departed}')
     def broken(self):
-        if(is_state('{relation_name}.available')):
-            self.remove_state('{relation_name}.available')
+        conv = self.conversation()
+        conv.remove_state('{relation_name}.connected')
+
+    def provide_data(self, port):
+        ''' Consumers will invoke this method to ship the extant unit the port
+            and address.
+        '''
+        for conv in self.conversations():
+            self.set_remote(scope=conv.scope, data={'port': port,
+                                                    'address': address})
