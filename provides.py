@@ -1,7 +1,6 @@
 from charms.reactive import hook
 from charms.reactive import RelationBase
-from charms.reactive import scopes
-from charms.reactive import is_state
+from charmhelpers.core.hookenv import unit_private_ip
 
 
 class ConsulClient(RelationBase):
@@ -22,4 +21,4 @@ class ConsulClient(RelationBase):
         '''
         for conv in self.conversations():
             self.set_remote(scope=conv.scope, data={'port': port,
-                                                    'address': address})
+                                                    'address': unit_private_ip()})  # noqa
